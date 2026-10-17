@@ -22,6 +22,7 @@
     .message{padding:12px 14px;border:1px solid var(--line);background:#152025;border-radius:11px;margin:12px 0 0;display:flex;align-items:flex-start;gap:9px;color:#bfcacd;font-size:12px;line-height:1.55}.message svg{flex:none;margin-top:1px;color:var(--accent)}.message.warning{border-color:#7c6342;color:#eed7b9}.message.warning svg{color:var(--warn)}
     .controls{display:flex;gap:10px;margin-top:14px}.btn{display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #41535a;border-radius:12px;padding:0 16px;min-height:52px;color:#f0f5f5;background:#202e33;font-size:14px;font-weight:610;transition:background .15s}.btn.primary{background:var(--accent);color:#162019;border-color:var(--accent);flex:1}.btn.primary:hover{background:#daffa1}.btn.secondary{flex:0 0 auto}.btn.ghost{flex:1;background:transparent;border-color:#34464c;color:#d0dcdd}.btn.small{min-height:44px;font-size:12px;padding:0 13px;flex:1}.btn svg{width:18px;height:18px}.buttonsSecondary{display:flex;gap:9px;margin-top:10px}.buttonsSecondary button{min-width:0}
     .setting{margin-top:22px;padding:17px;background:#152126;border:1px solid #28383f;border-radius:15px}.setting-line{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:13px}.setting-title{font-weight:620;font-size:13px}.setting-num{color:var(--accent);font-size:12px;font-weight:650;font-variant-numeric:tabular-nums}.range{width:100%;height:5px;accent-color:var(--accent);cursor:pointer}.range-ends{display:flex;justify-content:space-between;margin-top:9px;color:var(--muted);font-size:11px}.privacy{display:flex;align-items:center;gap:8px;padding:17px 2px 5px;color:var(--muted);font-size:12px;line-height:1.4}.privacy svg{flex:none}.foot{color:#70858a;font-size:11px;line-height:1.65;padding:13px 2px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    .choice{background:#202e33;border:1px solid #41535a;border-radius:10px;color:#e6eeee;min-height:46px;padding:0 12px;width:100%;font:inherit;font-size:13px}.choice:disabled{opacity:.52}.setting-spaced{margin-top:18px}.setting-help{color:var(--muted);font-size:11px;line-height:1.55;margin:9px 0 0}.check-line{display:flex;gap:10px;align-items:center;font-size:13px;margin-top:17px}.check-line input{width:17px;height:17px;accent-color:var(--accent)}.viewport.enhanced video{filter:brightness(1.75) contrast(1.22)}
     @media(min-width:650px){.app{padding-top:27px}.viewport{height:500px}.heading{margin-top:10px}.controls,.buttonsSecondary,.setting,.message{max-width:100%}}
     @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
@@ -29,10 +30,10 @@
 <body>
 <main class="app">
   <header class="top">
-    <div class="identity"><div class="symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 1.5v5m0 11v5M1.5 12h5m11 0h5"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg></div><div><div class="title">Mückenscout</div><div class="sub">Kamera-Bewegungsscanner · Beta</div></div></div>
+    <div class="identity"><div class="symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M12 1.5v5m0 11v5M1.5 12h5m11 0h5"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/></svg></div><div><div class="title">Mückenscout</div><div class="sub">Insekten-Bewegungsscanner · Beta 2</div></div></div>
     <div class="status" id="status"><span class="led"></span><span id="statusText">Bereit</span></div>
   </header>
-  <section class="heading" aria-label="Scanner-Status"><div><div class="eyebrow">LIVE-SUCHE</div><h1>Finde kleine<br/>Flugbewegungen.</h1></div><div class="counter"><strong id="count">0</strong><span>Hinweise</span></div></section>
+  <section class="heading" aria-label="Scanner-Status"><div><div class="eyebrow">INSEKTEN-SUCHE</div><h1>Finde kleine<br/>Flugobjekte.</h1></div><div class="counter"><strong id="count">0</strong><span>Hinweise</span></div></section>
   <section id="viewport" class="viewport" aria-label="Kamerabild mit möglichen Fundstellen">
     <video id="video" autoplay muted playsinline aria-label="Live-Kamerabild"></video>
     <canvas id="demoView" class="demo-view" aria-label="Simuliertes Kamerabild"></canvas>
@@ -40,131 +41,28 @@
     <div class="placeholder"><div class="radar"><b></b></div><h2>Scanner noch nicht gestartet</h2><p>Halte dein Smartphone ruhig und richte die Kamera auf eine helle Wand.</p></div>
     <div class="scan-bar"><span class="scan-pulse"></span><span class="scan-text" id="scanText">Bild wird analysiert</span><span class="scan-fps" id="qualityText">LOKAL · LIVE</span></div>
   </section>
-  <div id="message" class="message" role="status" aria-live="polite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 11v6m0-10v1"/></svg><span id="messageText">Die App erkennt Bewegung, keine Mückenart. Helles Licht und eine ruhige Kamera verbessern das Ergebnis.</span></div>
+  <div id="message" class="message" role="status" aria-live="polite"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 11v6m0-10v1"/></svg><span id="messageText">Spezialisiert auf kleine, mehrfach bewegte Objekte. Ein Insekt lässt sich damit nicht sicher bestimmen.</span></div>
   <div class="controls"><button class="btn primary" id="start"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5l11 7-11 7z"/></svg><span id="startLabel">Kamera starten</span></button><button class="btn secondary" id="switch" aria-label="Kamera wechseln" title="Kamera wechseln" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 11a8 8 0 0 0-14-5L4 8M4 4v4h4M4 13a8 8 0 0 0 14 5l2-2m0 4v-4h-4"/></svg></button></div>
   <div class="buttonsSecondary"><button class="btn small ghost" id="demo">Testmodus</button><button class="btn small ghost" id="torch" disabled>☀ Licht</button><button class="btn small ghost" id="snapshot" disabled>◎ Foto</button><button class="btn small ghost" id="sound" aria-pressed="false">♫ Ton aus</button></div>
   <section class="setting"><div class="setting-line"><label for="sensitivity" class="setting-title">Empfindlichkeit</label><output for="sensitivity" id="sensitivityOut" class="setting-num">66 %</output></div><input type="range" id="sensitivity" class="range" min="1" max="100" value="66"/><div class="range-ends"><span>Weniger Fehlalarme</span><span>Mehr kleine Bewegungen</span></div></section>
+  <section class="setting" aria-label="Kamera- und Bildanalyse-Einstellungen">
+    <div class="setting-line"><label for="cameraSource" class="setting-title">Kameraquelle</label></div>
+    <select id="cameraSource" class="choice" disabled><option value="">Standardkamera</option></select>
+    <p class="setting-help">Eine echte Infrarotkamera ist nur auswählbar, wenn sie angeschlossen ist und Brave sie als Kamera anbietet.</p>
+    <div class="setting-line setting-spaced"><label for="polarity" class="setting-title">Objekterkennung</label></div>
+    <select id="polarity" class="choice"><option value="auto">Helle und dunkle Flugobjekte</option><option value="dark">Nur dunkle Flugobjekte</option><option value="bright">Nur helle Flugobjekte (IR-Bild)</option></select>
+    <label class="check-line"><input type="checkbox" id="enhance"/> Anzeige aufhellen (kein echtes IR)</label>
+    <p class="setting-help">Mehrbild-Tracking filtert Einzelrauschen und große Bewegungen. Keine trainierte Mücken-KI; Staub bleibt eine mögliche Verwechslung.</p>
+  </section>
   <div class="privacy"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Die Videoanalyse erfolgt ausschließlich auf deinem Gerät. Keine Anmeldung und kein Video-Upload.</span></div>
-  <footer class="foot">Prototyp · Keine Infrarot- oder Wärmebildfunktion. Staub, Reflexionen und andere Insekten können Fehlalarme auslösen.</footer>
+  <footer class="foot">Beta 2 · Keine thermische oder eingebaute IR-Funktion. Aufhellung macht im Dunkeln keine unsichtbaren Details sichtbar. Keine garantierte Artbestimmung.</footer>
 </main>
 <script type="module">
-/** Pixel-based movement detector; does NOT classify mosquito species. */
-class MotionDetector {
-  constructor(width, height, { sensitivity = 66 } = {}) {
-    this.width = width; this.height = height; this.sensitivity = sensitivity;
-    this.reset();
-  }
-  reset() {
-    this.background = null;
-    this.previous = null;
-    this.tracks = [];
-    this.nextId = 1;
-    this.lastShake = -Infinity;
-  }
-  setSensitivity(value) { this.sensitivity = Math.max(1, Math.min(100, Number(value))); }
-  process(rgba, time = performance.now()) {
-    const W=this.width,H=this.height,N=W*H;
-    if (!rgba || rgba.length!==N*4) throw new RangeError('Ungültige Bildgröße');
-    const pixels=new Uint8Array(N);
-    for(let i=0,j=0;i<N;i++,j+=4) {
-      pixels[i] = Math.min(255, Math.round(rgba[j]*0.299 + rgba[j+1]*0.587 + rgba[j+2]*0.114));
-    }
-    if (!this.background) {
-      this.background=Float32Array.from(pixels);
-      this.previous=pixels;
-      return { confirmed:[], candidates:[], shake:false, motion:0, calibrated:false };
-    }
-    const threshold = 51 - this.sensitivity * 0.34; // 17..51 gray levels
-    const mask = new Uint8Array(N);
-    let changes=0, shifts=0;
-    for(let i=0;i<N;i++) {
-      const diff=Math.abs(pixels[i]-this.background[i]);
-      const temporal=Math.abs(pixels[i]-this.previous[i]);
-      if(diff>threshold) changes++;
-      if(diff>threshold && temporal>Math.max(6,threshold*0.34)) {
-        mask[i]=1; shifts++;
-      }
-    }
-    const shake = changes/N > 0.20 || shifts/N > 0.10;
-    if (shake) {
-      // Realign rapidly after movement / sudden light changes.
-      this.background=Float32Array.from(pixels);
-      this.previous=pixels;
-      this.tracks=[];
-      this.lastShake=time;
-      return { confirmed:[], candidates:[], shake:true, motion:changes/N, calibrated:true };
-    }
-    const changesRatio=changes/N;
-    const alpha=changesRatio>0.025 ? 0.015 : 0.04;
-    for(let i=0;i<N;i++) {
-      this.background[i]+= (pixels[i]-this.background[i])*alpha;
-    }
-    this.previous=pixels;
-
-    const visited=new Uint8Array(N);
-    const components=[];
-    const stack=[];
-    const minArea=this.sensitivity>82 ? 1 : 2;
-    const maxArea=Math.max(24,Math.floor(N*0.006));
-    const maxSide=Math.max(9,Math.floor(Math.min(W,H)*0.24));
-    // Flood fill connected movement pixels (8-neighborhood)
-    for(let start=0;start<N;start++) {
-      if(!mask[start] || visited[start]) continue;
-      stack.push(start); visited[start]=1;
-      let area=0, minX=W,minY=H,maxX=0,maxY=0,sumX=0,sumY=0;
-      while(stack.length) {
-        const i=stack.pop(), x=i%W, y=(i-x)/W;
-        area++; minX=Math.min(minX,x); minY=Math.min(minY,y);
-        maxX=Math.max(maxX,x); maxY=Math.max(maxY,y);
-        sumX+=x;sumY+=y;
-        if(area>maxArea) { // Skip costly giant components, but consume their pixels.
-          // Continue flood-fill to avoid treating attached fragments as new candidates.
-        }
-        for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++) {
-          if(dx===0 && dy===0) continue;
-          const nx=x+dx, ny=y+dy;
-          if(nx<0||nx>=W||ny<0||ny>=H) continue;
-          const ni=ny*W+nx;
-          if(mask[ni] && !visited[ni]) { visited[ni]=1; stack.push(ni); }
-        }
-      }
-      const cw=maxX-minX+1,ch=maxY-minY+1;
-      if(area>=minArea && area<=maxArea && cw<=maxSide && ch<=maxSide) {
-        components.push({x:sumX/area,y:sumY/area,w:cw,h:ch,area});
-      }
-    }
-    // Favor smallest high-contrast flying objects over large moving regions.
-    components.sort((a,b)=>a.area-b.area);
-    const candidates=components.slice(0,60);
-    const previousTracks=this.tracks.filter(t=>time-t.lastTime<850);
-    for(const t of previousTracks) t.matched=false;
-    const maxDist=Math.max(10,Math.min(W,H)*0.14);
-    for(const c of candidates) {
-      let closest=null, dist=maxDist;
-      for(const t of previousTracks) {
-        if(t.matched) continue;
-        const d=Math.hypot(t.x-c.x,t.y-c.y);
-        if(d<dist) {closest=t;dist=d;}
-      }
-      if(closest) {
-        closest.x=c.x;closest.y=c.y;closest.w=c.w;closest.h=c.h;
-        closest.travel+=dist;closest.hits++;closest.lastTime=time;closest.matched=true;
-      } else {
-        previousTracks.push({id:this.nextId++,x:c.x,y:c.y,w:c.w,h:c.h,travel:0,hits:1,lastTime:time,matched:true});
-      }
-    }
-    this.tracks=previousTracks.filter(t=>time-t.lastTime<750).slice(-80);
-    const confirmed=this.tracks.filter(t=>t.hits>=3 && t.travel>=2.3 && time-t.lastTime<260)
-      .slice(0,7).map(t=>({id:t.id,x:t.x,y:t.y,w:t.w,h:t.h,score:Math.min(98,48+t.hits*6)}));
-    return {confirmed,candidates,shake:false,motion:changesRatio,calibrated:true};
-  }
-}
-
-
+import { MotionDetector } from './src/detector.mjs';
 
 const $=id=>document.getElementById(id);
-const el={vp:$('viewport'),video:$('video'),demoView:$('demoView'),overlay:$('overlay'),status:$('status'),statusText:$('statusText'),count:$('count'),message:$('message'),messageText:$('messageText'),start:$('start'),startLabel:$('startLabel'),switch:$('switch'),demo:$('demo'),torch:$('torch'),snapshot:$('snapshot'),sound:$('sound'),sensitivity:$('sensitivity'),sensOut:$('sensitivityOut'),scanText:$('scanText'),qualityText:$('qualityText')};
-let mode='off',stream=null,facing='environment',torchEnabled=false,soundEnabled=false,audio=null;
+const el={vp:$('viewport'),video:$('video'),demoView:$('demoView'),overlay:$('overlay'),status:$('status'),statusText:$('statusText'),count:$('count'),message:$('message'),messageText:$('messageText'),start:$('start'),startLabel:$('startLabel'),switch:$('switch'),demo:$('demo'),torch:$('torch'),snapshot:$('snapshot'),sound:$('sound'),sensitivity:$('sensitivity'),sensOut:$('sensitivityOut'),scanText:$('scanText'),qualityText:$('qualityText'),cameraSource:$('cameraSource'),polarity:$('polarity'),enhance:$('enhance')};
+let mode='off',stream=null,facing='environment',selectedCameraId=null,torchEnabled=false,soundEnabled=false,audio=null;
 let detector=null,workCanvas=document.createElement('canvas'),workCtx=workCanvas.getContext('2d',{willReadFrequently:true});
 let raf=0,lastFrame=0,nowTime=0,count=0,lastBeep=-Infinity,confirmedAt=new Map(),confirmedPoints=[],shakeUntil=0;
 let demoStartedAt=0;
@@ -173,10 +71,10 @@ function notify(message,warning=false){el.messageText.textContent=message;el.mes
 function status(label,live=false){el.statusText.textContent=label;el.status.classList.toggle('live',live);}
 function configureDetector(w,h){
   if(!w||!h)return;
-  const scale=320/Math.max(w,h);
+  const scale=448/Math.max(w,h);
   const pw=Math.max(48,Math.round(w*scale)),ph=Math.max(48,Math.round(h*scale));
   workCanvas.width=pw;workCanvas.height=ph;
-  detector=new MotionDetector(pw,ph,{sensitivity:Number(el.sensitivity.value)});
+  detector=new MotionDetector(pw,ph,{sensitivity:Number(el.sensitivity.value),polarity:el.polarity.value});
   count=0;el.count.textContent='0';confirmedAt.clear();confirmedPoints=[];
 }
 function resizeOverlay(){
@@ -188,35 +86,51 @@ function cleanup(){
   if(stream){for(const track of stream.getTracks())track.stop();stream=null;}
   el.video.srcObject=null;
   mode='off';detector=null;torchEnabled=false;
-  el.vp.className='viewport';el.startLabel.textContent='Kamera starten';
-  el.switch.disabled=true;el.snapshot.disabled=true;el.torch.disabled=true;el.torch.textContent='☀ Licht';
+  el.vp.className='viewport'+(el.enhance.checked?' enhanced':'');el.startLabel.textContent='Kamera starten';
+  el.switch.disabled=true;el.snapshot.disabled=true;el.cameraSource.disabled=true;el.torch.disabled=true;el.torch.textContent='☀ Licht';
   el.demo.textContent='Testmodus';el.scanText.textContent='Bild wird analysiert';
   el.overlay.getContext('2d').clearRect(0,0,el.overlay.width,el.overlay.height);
   status('Bereit');
 }
+async function updateCameraList(){
+  if(!navigator.mediaDevices?.enumerateDevices)return;
+  try{
+    const items=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');
+    const activeId=stream?.getVideoTracks()[0]?.getSettings?.().deviceId||'';
+    el.cameraSource.replaceChildren();
+    for(let i=0;i<items.length;i++){
+      const option=document.createElement('option');option.value=items[i].deviceId;
+      option.textContent=items[i].label||`Kamera ${i+1}`;
+      el.cameraSource.append(option);
+    }
+    el.cameraSource.disabled=items.length<2;
+    if(items.some(d=>d.deviceId===activeId))el.cameraSource.value=activeId;
+  }catch{el.cameraSource.disabled=true;}
+}
 async function startCamera(){
   cleanup();
   if(!navigator.mediaDevices?.getUserMedia){
-    status('Nicht verfügbar');notify(window.isSecureContext ? 'Kamera im Browser nicht verfügbar. Prüfe Android → Apps → Brave → Berechtigungen → Kamera.' : 'Unsicherer Aufruf: Öffne Mückenscout über die veröffentlichte https://-Adresse statt über eine heruntergeladene HTML-Datei.',true);return;
+    status('Nicht verfügbar');notify(window.isSecureContext ? 'Kamera im Browser nicht verfügbar: Prüfe Android → Apps → Brave → Kamera-Berechtigung.' : 'Öffne Mückenscout direkt über die HTTPS-Website, nicht als lokale HTML-Datei.',true);return;
   }
   status('Kamera öffnen …');
   try{
-    stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:facing},width:{ideal:1280},height:{ideal:720},frameRate:{ideal:30}}});
+    stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{...(selectedCameraId?{deviceId:{exact:selectedCameraId}}:{facingMode:{ideal:facing}}),width:{ideal:1280},height:{ideal:720},frameRate:{ideal:30}}});
     el.video.srcObject=stream;
     await el.video.play();
     if(!el.video.videoWidth){await new Promise(resolve=>el.video.addEventListener('loadedmetadata',resolve,{once:true}));}
     configureDetector(el.video.videoWidth,el.video.videoHeight);
-    mode='camera';el.vp.className='viewport active';
+    mode='camera';el.vp.className='viewport active'+(el.enhance.checked?' enhanced':'');
     el.startLabel.textContent='Scanner stoppen';el.switch.disabled=false;el.snapshot.disabled=false;
     const track=stream.getVideoTracks()[0];
     const caps=typeof track.getCapabilities==='function'?track.getCapabilities():{};
     el.torch.disabled=!caps.torch;
     el.demo.textContent='Testmodus';
-    status('Scan aktiv',true);notify('Scanner läuft. Richte die Kamera auf eine helle Wand, ohne das Handy zu bewegen. Kleine Flugbewegungen werden markiert.');
+    await updateCameraList();
+    status('Scan aktiv',true);notify('Scanner läuft. Richte die Kamera auf eine helle Wand, ohne das Handy zu bewegen. Kleine, mehrfach bewegte Flugobjekte werden markiert. Keine sichere Insektenartbestimmung.');
     lastFrame=0;raf=requestAnimationFrame(loop);
   }catch(error){
     cleanup();status('Kamera-Fehler');
-    const reason=error?.name==='NotAllowedError'?'Kamerazugriff blockiert: In Brave die Einstellungen für diese Website öffnen und Kamera zulassen. Zusätzlich Android → Apps → Brave → Berechtigungen → Kamera prüfen.':error?.name==='NotFoundError'?'Keine Kamera gefunden.':'Kamera konnte nicht gestartet werden. Prüfe, ob eine andere App die Kamera verwendet und ob die Seite HTTPS nutzt.';
+    const reason=error?.name==='NotAllowedError'?'Kamerazugriff blockiert: In Brave die Kamera für diese Website und in Android die Kamera-Berechtigung für Brave aktivieren.':error?.name==='NotFoundError'?'Keine Kamera gefunden.':'Kamera konnte nicht gestartet werden. Prüfe, ob eine andere App die Kamera verwendet und ob die Seite HTTPS nutzt.';
     notify(reason,true);
   }
 }
@@ -261,10 +175,10 @@ function paintOverlay(time){
     ctx.strokeStyle='#d3ff8666';ctx.lineWidth=1;ctx.beginPath();ctx.arc(p.x,p.y,r+11,0,Math.PI*2);ctx.stroke();
     ctx.fillStyle='#d3ff86';ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,Math.PI*2);ctx.fill();
     const labelY=p.y-r-14;
-    ctx.font='600 11px system-ui';const tw=ctx.measureText('Mögliche Mücke').width;
+    ctx.font='600 11px system-ui';const tw=ctx.measureText('Mögliches Insekt').width;
     const lx=Math.max(7,Math.min(w-tw-20,p.x-tw/2-8));
     ctx.fillStyle='#142023df';ctx.fillRect(lx,labelY-16,tw+16,23);
-    ctx.fillStyle='#e8ffbe';ctx.fillText('Mögliche Mücke',lx+8,labelY);
+    ctx.fillStyle='#e8ffbe';ctx.fillText('Mögliches Insekt',lx+8,labelY);
   }
 }
 function chirp(){
@@ -292,8 +206,8 @@ function loop(time){
     const result=detector.process(workCtx.getImageData(0,0,workCanvas.width,workCanvas.height).data,time);
     if(result.shake){shakeUntil=time+1500;confirmedPoints=[];el.scanText.textContent='Kamera ruhig halten';}
     else if(time<shakeUntil){el.scanText.textContent='Kamera ruhig halten';}
-    else{el.scanText.textContent='Suche nach kleinen Bewegungen';}
-    confirmedPoints=result.confirmed;
+    else{el.scanText.textContent=result.lowLight?'Zu dunkel: mehr Licht oder echte IR-Kamera nötig':'Suche nach kleinen Flugobjekten';}
+    confirmedPoints=result.confirmed;el.qualityText.textContent=result.lowLight?'WENIG LICHT':'LOKAL · LIVE';
     if(confirmedPoints.length){
       for(const p of confirmedPoints){
         if(!confirmedAt.has(p.id)){
@@ -318,7 +232,10 @@ function saveSnapshot(){
 }
 el.start.addEventListener('click',()=>mode==='off'?startCamera():cleanup());
 el.demo.addEventListener('click',()=>mode==='demo'?cleanup():startDemo());
-el.switch.addEventListener('click',()=>{facing=facing==='environment'?'user':'environment';if(mode==='camera')startCamera();});
+el.switch.addEventListener('click',()=>{facing=facing==='environment'?'user':'environment';selectedCameraId=null;if(mode==='camera')startCamera();});
+el.cameraSource.addEventListener('change',()=>{selectedCameraId=el.cameraSource.value||null;if(mode==='camera')startCamera();});
+el.polarity.addEventListener('change',()=>detector?.setPolarity(el.polarity.value));
+el.enhance.addEventListener('change',()=>el.vp.classList.toggle('enhanced',el.enhance.checked));
 el.sensitivity.addEventListener('input',()=>{el.sensOut.textContent=el.sensitivity.value+' %';detector?.setSensitivity(el.sensitivity.value);});
 el.torch.addEventListener('click',async()=>{
   const track=stream?.getVideoTracks()[0];if(!track)return;
